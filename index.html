@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Coro — a private circle for the people who matter</title>
+<meta name="description" content="Coro is a closed circle of the people you'd actually want to stay updated with. See what they posted today, who's free tonight, and make plans in one tap.">
+<meta property="og:title" content="Coro — a private circle for the people who matter">
+<meta property="og:description" content="Your circle. One feed. Plans that happen.">
+<meta property="og:type" content="website">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23f2f0e9'/%3E%3Ccircle cx='16' cy='16' r='9' fill='none' stroke='%23353128' stroke-width='3'/%3E%3C/svg%3E">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&amp;family=Hanken+Grotesk:wght@400;500;600;700&amp;family=Spline+Sans+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+
+<style>
+  *{box-sizing:border-box}
+  :root{
+    --paper: oklch(0.955 0.011 100);
+    --card: oklch(0.985 0.006 100);
+    --card2: oklch(0.935 0.013 100);
+    --ink: oklch(0.24 0.018 95);
+    --ink2: oklch(0.48 0.016 98);
+    --ink3: oklch(0.64 0.013 96);
+    --rule: oklch(0.24 0.018 95 / .16);
+    --hair: oklch(0.24 0.018 95 / .08);
+    --clay: oklch(0.52 0.075 130); --clay-ink: oklch(0.40 0.07 130);
+    --moss: oklch(0.48 0.075 135); --moss-ink: oklch(0.37 0.07 135); --moss-wash: oklch(0.92 0.03 135);
+    --plum: oklch(0.70 0.11 60); --plum-ink: oklch(0.50 0.09 58); --plum-wash: oklch(0.94 0.045 62);
+    --amber: oklch(0.50 0.13 25); --amber-wash: oklch(0.91 0.05 26);
+  }
+  html{scroll-behavior:smooth}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:'Hanken Grotesk',system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+  a{color:var(--ink);text-decoration:none}
+  a:hover{color:var(--clay-ink)}
+  .serif{font-family:'Newsreader',Georgia,serif}
+  .mono{font-family:'Spline Sans Mono',ui-monospace,monospace;font-weight:400}
+  coro-ic{display:inline-flex;line-height:0}
+  .u{background-image:linear-gradient(var(--rule),var(--rule));background-size:100% 1px;background-repeat:no-repeat;background-position:0 100%;transition:background-size .22s ease}
+  .u:hover{background-size:0% 1px}
+  .cta{cursor:pointer;transition:background .18s ease,color .18s ease}
+  .cta:hover{background:var(--ink);color:var(--paper)}
+  #nav-links{flex-wrap:wrap;row-gap:10px}
+  [data-section]{scroll-margin-top:24px}
+  button.cta{font:inherit;text-align:left}
+  :focus-visible{outline:2px solid var(--clay-ink);outline-offset:2px}
+  @media (max-width: 1180px){
+    #record-grid{grid-template-columns:repeat(2,1fr) !important}
+  }
+  @media (max-width: 880px){
+    #hero, #feed, #presence, #plans, #record, #feedback{grid-template-columns:1fr !important}
+    #hero > div, #feed > div, #presence > div, #plans > div, #record > div, #feedback > div{
+      padding-left:0 !important;padding-right:0 !important;border-left:none !important;border-right:none !important}
+    #feed > div, #presence > div, #plans > div{padding-bottom:40px !important}
+    #feed > div, #presence > div, #plans > div, #feedback > div{justify-content:center !important}
+    #plans > div[data-mock]{order:0 !important}
+    #hero h1{font-size:56px !important}
+    #hero > div:last-child{padding-top:32px !important;justify-content:center !important}
+    #record > div > div:first-child{flex-direction:column;align-items:flex-start !important;gap:22px !important}
+    #record-grid, #strip{grid-template-columns:1fr !important}
+    #strip > div{border-right:none !important;border-bottom:1px solid var(--rule);padding:18px 0 !important}
+    #record-grid > div > div:first-child{height:200px !important}
+    .mock{width:100% !important;max-width:340px;margin:0 auto}
+  }
+  @media (max-width: 620px){
+    .wrap{padding:0 22px !important}
+    #hero h1{font-size:44px !important}
+    #feed h2, #presence h2, #plans h2, #record h2, #feedback h2{font-size:34px !important}
+    .pull{font-size:26px !important}
+  }
+</style>
+
+<script>
+  (function(){
+    var P={
+      'check':'<path d="M5 12.5l4.5 4.5L19 7"/>','clock':'<circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/>',
+      'lock':'<rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7.5a4 4 0 0 1 8 0V11"/>',
+      'camera':'<path d="M4 8h3l2-2h6l2 2h3v11H4z"/><circle cx="12" cy="13.5" r="3.3"/>',
+      'plus':'<path d="M12 5v14M5 12h14"/>','target':'<circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="3.8"/>',
+      'arrow':'<path d="M5 12h14M13 6l6 6-6 6"/>','bookmark':'<path d="M6 3h12v18l-6-4.5L6 21z"/>'
+    };
+    if(!customElements.get('coro-ic')){
+      customElements.define('coro-ic', class extends HTMLElement{
+        static get observedAttributes(){return['name','size','sw']}
+        constructor(){super();this.attachShadow({mode:'open'});}
+        connectedCallback(){this.r()} attributeChangedCallback(){this.r()}
+        r(){if(!this.shadowRoot)return;var n=this.getAttribute('name'),s=this.getAttribute('size')||20,w=this.getAttribute('sw')||2;
+          this.shadowRoot.innerHTML='<style>:host{display:inline-flex;line-height:0}</style><svg width="'+s+'" height="'+s+'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="'+w+'" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+(P[n]||'')+'</svg>';}
+      });
+    }
+  })();
+</script>
+</head>
+<body>
+
+<div style="min-height:100vh;background:var(--paper)">
+
+  <div class="wrap" style="max-width:1240px;margin:0 auto;padding:0 40px">
+
+    <header style="display:flex;align-items:baseline;justify-content:space-between;gap:32px;padding:26px 0 22px;border-bottom:1px solid var(--ink)">
+      <div style="display:flex;align-items:baseline;gap:14px">
+        <span class="serif" style="font-size:26px;letter-spacing:-.02em">coro</span>
+        <span class="mono" style="font-size:11px;color:var(--ink2);letter-spacing:.06em">a private circle for the people who matter</span>
+      </div>
+      <nav id="nav-links" style="display:flex;align-items:baseline;gap:26px">
+        <a class="mono u" href="#feed" style="font-size:11.5px;letter-spacing:.06em">01 Feed</a>
+        <a class="mono u" href="#presence" style="font-size:11.5px;letter-spacing:.06em">02 Presence</a>
+        <a class="mono u" href="#plans" style="font-size:11.5px;letter-spacing:.06em">03 Plans</a>
+        <a class="mono u" href="#record" style="font-size:11.5px;letter-spacing:.06em">04 Record</a>
+        <a class="mono u" href="#feedback" style="font-size:11.5px;letter-spacing:.06em">05 Your turn</a>
+      </nav>
+    </header>
+
+    <div id="hero" style="display:grid;grid-template-columns:1fr 1fr;gap:0;border-bottom:1px solid var(--ink)">
+      <div style="padding:56px 48px 48px 0;display:flex;flex-direction:column;justify-content:space-between;border-right:1px solid var(--rule)">
+        <div>
+          <h1 class="serif" style="margin:0;font-size:88px;line-height:.96;letter-spacing:-.035em;font-weight:400">Your circle.<br>One feed.<br>Plans that<br>happen.</h1>
+          <p style="margin:32px 0 0;font-size:17.5px;line-height:1.55;color:var(--ink2);font-weight:500;max-width:430px;text-wrap:pretty">Coro is a closed circle of the people you'd actually want to stay updated with. You see what they posted today, who's free tonight, and make plans in one tap.</p>
+        </div>
+        <div style="display:flex;align-items:center;gap:22px;margin-top:44px">
+          <a href="#feedback" class="cta" style="display:inline-flex;align-items:center;gap:10px;border:1px solid var(--ink);padding:13px 22px;font-size:14.5px;font-weight:600">Tell me what you think <coro-ic name="arrow" size="15" sw="2"></coro-ic></a>
+        </div>
+      </div>
+
+      <div style="padding:46px 0 0 48px;display:flex;justify-content:center;align-items:flex-end;overflow:hidden">
+        <div class="mock" style="width:318px;border:1px solid var(--ink);border-bottom:none;background:var(--card)">
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 18px 8px;border-bottom:1px solid var(--hair)">
+            <span class="mono" style="font-size:11px">9:41</span>
+            <div style="display:flex;gap:5px;align-items:flex-end">
+              <div style="display:flex;gap:1.5px;align-items:flex-end"><div style="width:2.5px;height:4px;background:var(--ink)"></div><div style="width:2.5px;height:6px;background:var(--ink)"></div><div style="width:2.5px;height:8px;background:var(--ink)"></div><div style="width:2.5px;height:10px;background:var(--ink)"></div></div>
+              <div style="width:19px;height:10px;border:1.3px solid var(--ink);padding:1.3px;margin-left:2px"><div style="width:70%;height:100%;background:var(--ink)"></div></div>
+            </div>
+          </div>
+          <div style="padding:18px 18px 0;display:flex;align-items:flex-start;justify-content:space-between">
+            <div>
+              <div class="serif" style="font-size:29px;letter-spacing:-.025em;line-height:1.05">Weekend Six</div>
+              <div class="mono" style="font-size:10.5px;color:var(--ink2);margin-top:4px">6 CLOSE FRIENDS · 3 FREE</div>
+            </div>
+            <div style="width:34px;height:34px;border-radius:50%;background:var(--moss);display:flex;align-items:center;justify-content:center"><span class="serif" style="font-size:15px;color:var(--card)">A</span></div>
+          </div>
+          <div style="margin-top:18px;border-top:1px solid var(--hair)">
+            <div style="display:flex;align-items:center;gap:11px;padding:13px 18px;border-bottom:1px solid var(--hair)">
+              <div style="width:34px;height:34px;border-radius:50%;background:var(--amber);display:flex;align-items:center;justify-content:center;flex-shrink:0"><span class="serif" style="font-size:14px;color:var(--card)">M</span></div>
+              <div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:700;line-height:1.3">Mara invited you to Dinner at Nonna's</div><div class="mono" style="font-size:10px;color:var(--ink2);margin-top:3px">SAT 7:00 PM · TAP TO RESPOND</div></div>
+            </div>
+            <div style="display:flex;align-items:center;gap:11px;padding:13px 18px;border-bottom:1px solid var(--hair)">
+              <div style="width:34px;height:34px;background:var(--plum-wash);display:flex;align-items:center;justify-content:center;flex-shrink:0"><coro-ic name="target" size="17" sw="2" style="color:var(--plum-ink)"></coro-ic></div>
+              <div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:700">Saturday's plan · poll</div><div class="mono" style="font-size:10px;color:var(--ink2);margin-top:3px">5 OF 6 VOTED · CLOSES 4PM</div></div>
+            </div>
+          </div>
+          <div style="padding:18px">
+            <div class="mono" style="font-size:10px;letter-spacing:.14em;color:var(--ink2);margin-bottom:14px">WHO'S FREE</div>
+            <div style="display:flex;gap:16px">
+              <div style="text-align:center;width:54px"><div style="position:relative;width:48px;height:48px;margin:0 auto"><div style="width:48px;height:48px;border-radius:50%;background:var(--amber);display:flex;align-items:center;justify-content:center"><span class="serif" style="font-size:19px;color:var(--card)">M</span></div><div style="position:absolute;right:0;bottom:0;width:12px;height:12px;border-radius:50%;background:var(--moss);border:2.5px solid var(--card)"></div></div><div style="font-size:11.5px;font-weight:700;margin-top:7px">Mara</div><div class="mono" style="font-size:9.5px;color:var(--ink2)">FREE</div></div>
+              <div style="text-align:center;width:54px"><div style="position:relative;width:48px;height:48px;margin:0 auto"><div style="width:48px;height:48px;border-radius:50%;background:var(--moss);display:flex;align-items:center;justify-content:center"><span class="serif" style="font-size:19px;color:var(--card)">J</span></div><div style="position:absolute;right:0;bottom:0;width:12px;height:12px;border-radius:50%;background:var(--moss);border:2.5px solid var(--card)"></div></div><div style="font-size:11.5px;font-weight:700;margin-top:7px">Jonah</div><div class="mono" style="font-size:9.5px;color:var(--ink2)">FREE</div></div>
+              <div style="text-align:center;width:54px;opacity:.42"><div style="width:48px;height:48px;border-radius:50%;background:var(--card2);margin:0 auto;display:flex;align-items:center;justify-content:center"><span class="serif" style="font-size:19px;color:var(--ink2)">P</span></div><div style="font-size:11.5px;font-weight:700;margin-top:7px">Priya</div><div class="mono" style="font-size:9.5px;color:var(--ink2)">BUSY</div></div>
+              <div style="text-align:center;width:54px"><div style="position:relative;width:48px;height:48px;margin:0 auto"><div style="width:48px;height:48px;border-radius:50%;background:var(--plum);display:flex;align-items:center;justify-content:center"><span class="serif" style="font-size:19px;color:var(--card)">T</span></div><div style="position:absolute;right:0;bottom:0;width:12px;height:12px;border-radius:50%;background:var(--moss);border:2.5px solid var(--card)"></div></div><div style="font-size:11.5px;font-weight:700;margin-top:7px">Theo</div><div class="mono" style="font-size:9.5px;color:var(--ink2)">FREE</div></div>
+            </div>
+          </div>
+          <div style="padding:0 18px 20px">
+            <div style="display:flex;align-items:center;gap:11px;padding:12px 0;border-top:1px solid var(--hair)">
+              <coro-ic name="camera" size="17" sw="2" style="color:var(--ink2)"></coro-ic>
+              <span style="flex:1;font-size:13px;font-weight:600;color:var(--ink2)">Post a photo to Weekend Six</span>
+              <coro-ic name="plus" size="15" sw="2.2" style="color:var(--ink3)"></coro-ic>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="strip" style="display:grid;grid-template-columns:repeat(3,1fr);border-bottom:1px solid var(--ink)">
+      <div style="padding:22px 28px 22px 0;border-right:1px solid var(--rule)"><span class="mono" style="font-size:11px;color:var(--ink2)">NO ALGORITHM.</span> <span style="font-size:14px;font-weight:600">Your circle, newest first.</span></div>
+      <div style="padding:22px 28px;border-right:1px solid var(--rule)"><span class="mono" style="font-size:11px;color:var(--ink2)">NO AUDIENCE.</span> <span style="font-size:14px;font-weight:600">Invite only, no strangers.</span></div>
+      <div style="padding:22px 0 22px 28px"><span class="mono" style="font-size:11px;color:var(--ink2)">NO SCORE.</span> <span style="font-size:14px;font-weight:600">No likes, counts or streaks.</span></div>
+    </div>
+
+    <section id="feed" data-section style="display:grid;grid-template-columns:120px 1fr 1fr;gap:0;border-bottom:1px solid var(--rule);padding-top:72px">
+      <div class="mono" style="font-size:11.5px;color:var(--ink2);padding-bottom:72px">01<br>THE FEED</div>
+      <div style="padding:0 48px 72px 0;display:flex;justify-content:flex-start">
+        <div class="mock" style="width:318px;border:1px solid var(--ink);background:var(--card);align-self:flex-start">
+          <div style="padding:16px 18px;border-bottom:1px solid var(--ink);display:flex;align-items:baseline;justify-content:space-between">
+            <div class="serif" style="font-size:19px">Weekend Six</div>
+            <span class="mono" style="font-size:10px;color:var(--ink2)">3 NEW TODAY</span>
+          </div>
+          <div style="padding:14px 18px;display:flex;flex-direction:column;gap:14px">
+            <div style="border:1px solid var(--hair)">
+              <div style="position:relative;height:180px;background:repeating-linear-gradient(135deg, var(--amber-wash) 0 10px, var(--card2) 10px 20px)">
+                <div style="position:absolute;inset:0;padding:11px;display:flex;flex-direction:column;justify-content:space-between">
+                  <div style="display:flex;align-items:flex-start;justify-content:space-between">
+                    <div style="display:flex;align-items:center;gap:7px;background:rgba(33,29,25,.6);padding:5px 11px 5px 5px;border-radius:999px">
+                      <div style="width:20px;height:20px;border-radius:50%;background:var(--amber);display:flex;align-items:center;justify-content:center"><span class="serif" style="font-size:10px;color:#FFFEFB">M</span></div>
+                      <span style="font-size:11.5px;font-weight:700;color:#FFFEFB">Mara</span>
+                      <span class="mono" style="font-size:10px;color:rgba(255,254,251,.72)">20m</span>
+                    </div>
+                    <div style="width:28px;height:28px;border-radius:50%;background:rgba(33,29,25,.6);display:flex;align-items:center;justify-content:center"><coro-ic name="bookmark" size="13" sw="2" style="color:#FFFEFB"></coro-ic></div>
+                  </div>
+                  <div style="display:flex;justify-content:center"><span class="mono" style="font-size:10px;color:#FFFEFB;letter-spacing:.04em;background:rgba(33,29,25,.6);padding:5px 9px;border-radius:999px">PHOTO — GOLDEN HOUR ON THE PORCH</span></div>
+                </div>
+              </div>
+            </div>
+            <div style="border:1px solid var(--hair)">
+              <div style="position:relative;height:180px;background:repeating-linear-gradient(135deg, var(--plum-wash) 0 10px, var(--card2) 10px 20px)">
+                <div style="position:absolute;inset:0;padding:11px;display:flex;flex-direction:column;justify-content:space-between">
+                  <div style="display:flex;align-items:flex-start;justify-content:space-between">
+                    <div style="display:flex;align-items:center;gap:7px;background:rgba(33,29,25,.6);padding:5px 11px 5px 5px;border-radius:999px">
+                      <div style="width:20px;height:20px;border-radius:50%;background:var(--plum);display:flex;align-items:center;justify-content:center"><span class="serif" style="font-size:10px;color:#FFFEFB">T</span></div>
+                      <span style="font-size:11.5px;font-weight:700;color:#FFFEFB">Theo</span>
+                      <span class="mono" style="font-size:10px;color:rgba(255,254,251,.72)">2h</span>
+                    </div>
+                    <div style="width:28px;height:28px;border-radius:50%;background:rgba(33,29,25,.6);display:flex;align-items:center;justify-content:center"><coro-ic name="bookmark" size="13" sw="2" style="color:#FFFEFB"></coro-ic></div>
+                  </div>
+                  <div style="display:flex;justify-content:center"><span class="mono" style="font-size:10px;color:#FFFEFB;letter-spacing:.04em;background:rgba(33,29,25,.6);padding:5px 9px;border-radius:999px">VIDEO — DOG RUNNING LAPS IN THE YARD</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div style="padding:0 0 72px 48px;border-left:1px solid var(--rule)">
+        <h2 class="serif" style="margin:0;font-size:44px;line-height:1.05;letter-spacing:-.03em;font-weight:400">A feed you can care about</h2>
+        <p style="margin:22px 0 0;font-size:16.5px;line-height:1.6;color:var(--ink2);font-weight:500;text-wrap:pretty">Photos and videos from your circle, and that's the whole feed. No suggestions, no reposts, no ads, no algorithm deciding who you should see. When you've seen today's posts, you're done, and the app has nothing left to show you.</p>
+        <div style="margin-top:28px;border-top:1px solid var(--rule)">
+          <div style="padding:13px 0;border-bottom:1px solid var(--rule);display:flex;gap:14px"><span class="mono" style="font-size:11px;color:var(--ink3);width:22px">a</span><span style="font-size:15px;font-weight:600">People you want to see</span></div>
+          <div style="padding:13px 0;border-bottom:1px solid var(--rule);display:flex;gap:14px"><span class="mono" style="font-size:11px;color:var(--ink3);width:22px">b</span><span style="font-size:15px;font-weight:600">Save a post to the circle's record instead of liking it</span></div>
+          <div style="padding:13px 0;display:flex;gap:14px"><span class="mono" style="font-size:11px;color:var(--ink3);width:22px">c</span><span style="font-size:15px;font-weight:600">Post to one circle at a time</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="presence" data-section style="display:grid;grid-template-columns:120px 1fr 1fr;gap:0;border-bottom:1px solid var(--rule);padding-top:72px">
+      <div class="mono" style="font-size:11.5px;color:var(--ink2);padding-bottom:72px">02<br>PRESENCE</div>
+      <div style="padding:0 48px 72px 0">
+        <h2 class="serif" style="margin:0;font-size:44px;line-height:1.05;letter-spacing:-.03em;font-weight:400">No asking "hey,<br>you up to anything?"</h2>
+        <p style="margin:22px 0 0;font-size:16.5px;line-height:1.6;color:var(--ink2);font-weight:500;text-wrap:pretty">One tap sets your status for the circle: free now, free later, or busy. The circle is able to make plans with whoever is free. Statuses expire by themselves, so there's nothing to remember to turn off.</p>
+        <div style="margin-top:28px;border-top:1px solid var(--rule)">
+          <div style="padding:13px 0;border-bottom:1px solid var(--rule);display:flex;gap:14px"><span class="mono" style="font-size:11px;color:var(--ink3);width:22px">a</span><span style="font-size:15px;font-weight:600">Being busy mutes everything</span></div>
+          <div style="padding:13px 0;display:flex;gap:14px"><span class="mono" style="font-size:11px;color:var(--ink3);width:22px">b</span><span style="font-size:15px;font-weight:600">Coro notifies you who's free</span></div>
+        </div>
+      </div>
+      <div style="padding:0 0 72px 0;display:flex;justify-content:flex-end">
+        <div class="mock" style="width:318px;border:1px solid var(--ink);background:var(--card);align-self:flex-start">
+          <div style="padding:16px 18px;border-bottom:1px solid var(--ink)"><div class="serif" style="font-size:19px">Who's Free</div><div class="mono" style="font-size:10px;color:var(--ink2);margin-top:2px">WEEKEND SIX · 3 FREE NOW</div></div>
+          <div style="display:flex;align-items:center;gap:13px;padding:14px 18px;background:var(--moss-wash);border-bottom:1px solid var(--hair)">
+            <div style="width:32px;height:32px;border-radius:50%;background:var(--moss);display:flex;align-items:center;justify-content:center"><coro-ic name="check" size="16" sw="2.8" style="color:var(--card)"></coro-ic></div>
+            <div style="flex:1"><div style="font-size:14px;font-weight:700">Free now</div><div class="mono" style="font-size:10px;color:var(--moss-ink);margin-top:2px">UNTIL YOU SAY OTHERWISE</div></div>
+          </div>
+          <div style="display:flex;align-items:center;gap:13px;padding:14px 18px;border-bottom:1px solid var(--hair)">
+            <div style="width:32px;height:32px;border-radius:50%;background:var(--plum-wash);display:flex;align-items:center;justify-content:center"><coro-ic name="clock" size="16" sw="2" style="color:var(--plum-ink)"></coro-ic></div>
+            <div style="flex:1"><div style="font-size:14px;font-weight:700">Free later</div><div class="mono" style="font-size:10px;color:var(--ink2);margin-top:2px">AFTER 6PM TONIGHT</div></div>
+          </div>
+          <div style="display:flex;align-items:center;gap:13px;padding:14px 18px;border-bottom:1px solid var(--hair)">
+            <div style="width:32px;height:32px;border-radius:50%;background:var(--card2);display:flex;align-items:center;justify-content:center"><coro-ic name="lock" size="15" sw="2" style="color:var(--ink2)"></coro-ic></div>
+            <div style="flex:1"><div style="font-size:14px;font-weight:700">Heads down</div><div class="mono" style="font-size:10px;color:var(--ink2);margin-top:2px">NO PINGS UNTIL YOU'RE BACK</div></div>
+          </div>
+          <div style="padding:14px 18px;display:flex;flex-direction:column;gap:12px">
+            <div style="display:flex;align-items:center;gap:11px"><div style="width:30px;height:30px;border-radius:50%;background:var(--amber);display:flex;align-items:center;justify-content:center"><span class="serif" style="font-size:13px;color:var(--card)">M</span></div><span style="flex:1;font-size:13.5px;font-weight:600">Mara</span><span class="mono" style="font-size:10px;color:var(--moss-ink)">FREE · NOTHING ON</span></div>
+            <div style="display:flex;align-items:center;gap:11px"><div style="width:30px;height:30px;border-radius:50%;background:var(--plum);display:flex;align-items:center;justify-content:center"><span class="serif" style="font-size:13px;color:var(--card)">T</span></div><span style="flex:1;font-size:13.5px;font-weight:600">Theo</span><span class="mono" style="font-size:10px;color:var(--moss-ink)">FREE · WALKING HOME</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="plans" data-section style="display:grid;grid-template-columns:120px 1fr 1fr;gap:0;border-bottom:1px solid var(--rule);padding-top:72px">
+      <div class="mono" style="font-size:11.5px;color:var(--ink2);padding-bottom:72px">03<br>PLANS</div>
+      <div data-mock style="padding:0 0 72px 48px;order:3;display:flex;justify-content:flex-end;border-left:1px solid var(--rule)">
+        <div class="mock" style="width:318px;border:1px solid var(--ink);background:var(--card);align-self:flex-start">
+          <div style="padding:16px 18px;border-bottom:1px solid var(--ink)"><div class="serif" style="font-size:19px">Saturday's plan</div><div class="mono" style="font-size:10px;color:var(--ink2);margin-top:2px">5 OF 6 VOTED · CLOSES 4PM</div></div>
+          <div style="padding:16px 18px;border-bottom:1px solid var(--hair)">
+            <div style="display:flex;justify-content:space-between;align-items:baseline"><span style="font-size:14.5px;font-weight:700;color:var(--clay-ink)">Dinner at Nonna's</span><span class="mono" style="font-size:11px;color:var(--clay-ink)">3</span></div>
+            <div style="height:5px;background:var(--card2);margin-top:9px"><div style="width:60%;height:100%;background:var(--clay)"></div></div>
+          </div>
+          <div style="padding:16px 18px;border-bottom:1px solid var(--hair)">
+            <div style="display:flex;justify-content:space-between;align-items:baseline"><span style="font-size:14.5px;font-weight:600">Lake swim, then pizza</span><span class="mono" style="font-size:11px;color:var(--ink2)">2</span></div>
+            <div style="height:5px;background:var(--card2);margin-top:9px"><div style="width:40%;height:100%;background:var(--plum)"></div></div>
+          </div>
+          <div style="padding:16px 18px;border-bottom:1px solid var(--hair)">
+            <div style="display:flex;justify-content:space-between;align-items:baseline"><span style="font-size:14.5px;font-weight:600;color:var(--ink2)">Nothing. Stay in.</span><span class="mono" style="font-size:11px;color:var(--ink3)">0</span></div>
+            <div style="height:5px;background:var(--card2);margin-top:9px"></div>
+          </div>
+          <div style="padding:14px 18px;display:flex;gap:11px;align-items:flex-start;background:var(--moss-wash)">
+            <coro-ic name="check" size="16" sw="2.6" style="color:var(--moss-ink);margin-top:2px"></coro-ic>
+            <span style="font-size:12.5px;font-weight:600;color:var(--moss-ink);line-height:1.45">Nonna's is winning. The invite goes out on its own when the poll closes.</span>
+          </div>
+        </div>
+      </div>
+      <div style="padding:0 48px 72px 0">
+        <h2 class="serif" style="margin:0;font-size:44px;line-height:1.05;letter-spacing:-.03em;font-weight:400">Forty messages, no plan.<br>Make plans simpler</h2>
+        <p style="margin:22px 0 0;font-size:16.5px;line-height:1.6;color:var(--ink2);font-weight:500;text-wrap:pretty">You propose one plan with a time and a place. Everyone either agrees or suggests an alternate. If alternates come in, Coro turns them into a poll and the winner becomes the real invite.</p>
+        <div style="margin-top:28px;border-top:1px solid var(--rule)">
+          <div style="padding:13px 0;border-bottom:1px solid var(--rule);display:flex;gap:14px"><span class="mono" style="font-size:11px;color:var(--ink3);width:22px">a</span><span style="font-size:15px;font-weight:600">A concrete plan first</span></div>
+          <div style="padding:13px 0;border-bottom:1px solid var(--rule);display:flex;gap:14px"><span class="mono" style="font-size:11px;color:var(--ink3);width:22px">b</span><span style="font-size:15px;font-weight:600">Anyone can counter with a different time or place</span></div>
+          <div style="padding:13px 0;display:flex;gap:14px"><span class="mono" style="font-size:11px;color:var(--ink3);width:22px">c</span><span style="font-size:15px;font-weight:600">The poll only happens if there's something to decide</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="record" data-section style="display:grid;grid-template-columns:120px 1fr;gap:0;border-bottom:1px solid var(--ink);padding-top:72px">
+      <div class="mono" style="font-size:11.5px;color:var(--ink2);padding-bottom:72px">04<br>RECORD</div>
+      <div style="padding:0 0 72px 0">
+        <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:48px">
+          <h2 class="serif" style="margin:0;font-size:44px;line-height:1.05;letter-spacing:-.03em;font-weight:400">Every hangout saved for you</h2>
+          <p style="margin:0;font-size:16.5px;line-height:1.6;color:var(--ink2);font-weight:500;max-width:400px;text-wrap:pretty">Upload any photos taken during the event into a shared record for the circle. Create a simple digital scrapbook to look back at anytime.</p>
+        </div>
+        <div id="record-grid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--rule);border:1px solid var(--rule);margin-top:44px">
+          <div style="background:var(--paper)">
+            <div style="height:220px;background:repeating-linear-gradient(135deg, var(--plum-wash) 0 10px, var(--card2) 10px 20px);display:flex;align-items:flex-end;padding:12px"><span class="mono" style="font-size:10px;color:var(--ink2);background:var(--card);padding:4px 7px">PHOTO — LAKE DAY</span></div>
+            <div style="padding:18px 18px 22px"><div style="display:flex;justify-content:space-between;align-items:baseline"><span class="serif" style="font-size:21px;letter-spacing:-.015em">Lake day</span><span class="mono" style="font-size:10px;color:var(--ink2)">JUN 14 · 5</span></div><div style="font-size:14px;color:var(--ink2);font-weight:500;margin-top:9px;line-height:1.5">Jacob brought the wrong charcoal. Ate at 10pm anyway.</div></div>
+          </div>
+          <div style="background:var(--paper)">
+            <div style="height:220px;background:repeating-linear-gradient(135deg, var(--amber-wash) 0 10px, var(--card2) 10px 20px);display:flex;align-items:flex-end;padding:12px"><span class="mono" style="font-size:10px;color:var(--ink2);background:var(--card);padding:4px 7px">PHOTO — BIRTHDAY</span></div>
+            <div style="padding:18px 18px 22px"><div style="display:flex;justify-content:space-between;align-items:baseline"><span class="serif" style="font-size:21px;letter-spacing:-.015em">Priya turns 30</span><span class="mono" style="font-size:10px;color:var(--ink2)">MAY 2 · 6</span></div><div style="font-size:14px;color:var(--ink2);font-weight:500;margin-top:9px;line-height:1.5">The only night this year everyone made it.</div></div>
+          </div>
+          <div style="background:var(--paper)">
+            <div style="height:220px;background:repeating-linear-gradient(135deg, var(--moss-wash) 0 10px, var(--card2) 10px 20px);display:flex;align-items:flex-end;padding:12px"><span class="mono" style="font-size:10px;color:var(--ink2);background:var(--card);padding:4px 7px">PHOTO — TUESDAY</span></div>
+            <div style="padding:18px 18px 22px"><div style="display:flex;justify-content:space-between;align-items:baseline"><span class="serif" style="font-size:21px;letter-spacing:-.015em">Just a Tuesday</span><span class="mono" style="font-size:10px;color:var(--ink2)">APR 22 · 3</span></div><div style="font-size:14px;color:var(--ink2);font-weight:500;margin-top:9px;line-height:1.5">Two hours on Mara's steps. Nobody planned it.</div></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div style="padding:80px 0;border-bottom:1px solid var(--rule)">
+      <p class="serif pull" style="margin:0;max-width:900px;font-size:34px;line-height:1.28;letter-spacing:-.02em;font-weight:400;text-wrap:pretty">Coro runs out of things to show you on purpose.&nbsp; A circle of people can only post so much in a day so you catch up, make a plan, and put your phone down.</p>
+    </div>
+
+    <section id="feedback" data-section style="display:grid;grid-template-columns:120px 1fr 1fr;padding:72px 0;border-bottom:1px solid var(--ink)">
+      <div class="mono" style="font-size:11.5px;color:var(--ink2)">05<br>YOUR TURN</div>
+      <div style="padding-right:48px">
+        <h2 class="serif" style="margin:0;font-size:46px;line-height:1.02;letter-spacing:-.03em;font-weight:400">Tell me what you think</h2>
+        <p style="margin:20px 0 0;font-size:16.5px;line-height:1.6;color:var(--ink2);font-weight:500;max-width:390px;text-wrap:pretty">A simple working prototype has been built, but we need input from you! Be blunt; give any feedback or features you think would be good additions.</p>
+      </div>
+      <div style="border-left:1px solid var(--rule);padding-left:48px">
+
+        <form id="feedback-form" novalidate>
+          <div class="mono" style="font-size:10.5px;letter-spacing:.12em;color:var(--ink2);margin-bottom:10px">GUT REACTION</div>
+          <div id="gut-row" role="radiogroup" aria-label="Gut reaction" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:26px"></div>
+
+          <div class="mono" style="font-size:10.5px;letter-spacing:.12em;color:var(--ink2);margin-bottom:10px">WHAT LANDED? (PICK ANY)</div>
+          <div id="chip-row" role="group" aria-label="What landed" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:26px"></div>
+
+          <label class="mono" for="note" style="display:block;font-size:10.5px;letter-spacing:.12em;color:var(--ink2);margin-bottom:10px">WHAT WOULD YOU CHANGE?</label>
+          <textarea id="note" name="note" placeholder="The part I'd push back on is…" style="display:block;width:100%;height:130px;resize:vertical;border:1px solid var(--ink);background:var(--card);padding:14px 16px;font-family:'Hanken Grotesk',system-ui,sans-serif;font-size:15px;line-height:1.5;color:var(--ink);outline:none"></textarea>
+
+          <button id="submit-btn" type="submit" disabled style="display:block;width:100%;border:1px solid var(--ink);border-top:none;padding:15px 24px;font-family:inherit;font-size:14.5px;font-weight:700;text-align:center;background:var(--card2);color:var(--ink3);cursor:default">Send it</button>
+          <div id="form-status" class="mono" role="status" aria-live="polite" style="font-size:10.5px;color:var(--ink3);margin-top:12px;min-height:14px"></div>
+        </form>
+
+        <div id="thanks-panel" hidden style="border:1px solid var(--ink);padding:36px 32px;background:var(--card)">
+          <div class="serif" style="font-size:34px;letter-spacing:-.025em;line-height:1.1">Thank you.</div>
+          <p style="margin:14px 0 0;font-size:16px;line-height:1.6;color:var(--ink2);font-weight:500">That's genuinely useful. I'll come back to you before anything gets built — and if you thought of something after hitting send, just tell me directly.</p>
+          <button type="button" id="again-btn" class="cta" style="display:inline-block;border:1px solid var(--ink);background:transparent;color:var(--ink);font-family:inherit;padding:11px 18px;font-size:14px;font-weight:600;margin-top:24px">Add something else</button>
+        </div>
+
+      </div>
+    </section>
+
+    <footer style="display:flex;align-items:baseline;justify-content:space-between;gap:32px;padding:24px 0 44px">
+      <span class="serif" style="font-size:18px;letter-spacing:-.02em">coro</span>
+      <div style="display:flex;gap:24px">
+        <a class="mono u" href="#feed" style="font-size:11px">Feed</a>
+        <a class="mono u" href="#presence" style="font-size:11px">Presence</a>
+        <a class="mono u" href="#plans" style="font-size:11px">Plans</a>
+        <a class="mono u" href="#record" style="font-size:11px">Record</a>
+        <a class="mono u" href="#feedback" style="font-size:11px">Your turn</a>
+      </div>
+    </footer>
+
+  </div>
+</div>
+
+<script>
+(function(){
+  'use strict';
+
+  // Optional: paste a form endpoint (Formspree, Basin, Netlify, a Google Apps Script
+  // webhook, …) to actually receive responses. Left empty, the form only shows the
+  // thank-you panel locally and nothing is transmitted anywhere.
+  var FEEDBACK_ENDPOINT = '';
+
+  var GUTS  = ['I’d use this', 'Maybe, needs work', 'Not for me'];
+  var CHIPS = ['The feed', 'Who’s free', 'The poll', 'Digital scrapbook', 'Keeping it invite-only'];
+
+  var state = { gut: null, picks: [], note: '' };
+
+  var form    = document.getElementById('feedback-form');
+  var gutRow  = document.getElementById('gut-row');
+  var chipRow = document.getElementById('chip-row');
+  var note    = document.getElementById('note');
+  var submit  = document.getElementById('submit-btn');
+  var status  = document.getElementById('form-status');
+  var thanks  = document.getElementById('thanks-panel');
+
+  function makeButton(label, borderVar){
+    var b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'cta';
+    b.textContent = label;
+    b.setAttribute('aria-pressed', 'false');
+    b.style.cssText = 'border:1px solid ' + borderVar + ';background:transparent;color:var(--ink);' +
+      'font-family:inherit;padding:10px 16px;font-size:14px;font-weight:600';
+    return b;
+  }
+
+  function paint(btn, on){
+    btn.style.background = on ? 'var(--ink)' : 'transparent';
+    btn.style.color = on ? 'var(--paper)' : 'var(--ink)';
+    btn.setAttribute('aria-pressed', on ? 'true' : 'false');
+  }
+
+  var gutButtons = GUTS.map(function(label){
+    var b = makeButton(label, 'var(--ink)');
+    b.addEventListener('click', function(){
+      state.gut = (state.gut === label) ? null : label;
+      gutButtons.forEach(function(x){ paint(x, x.textContent === state.gut); });
+      refresh();
+    });
+    gutRow.appendChild(b);
+    return b;
+  });
+
+  var chipButtons = CHIPS.map(function(label){
+    var b = makeButton(label, 'var(--rule)');
+    b.style.padding = '9px 14px';
+    b.style.fontSize = '13.5px';
+    b.addEventListener('click', function(){
+      var i = state.picks.indexOf(label);
+      if(i === -1){ state.picks.push(label); } else { state.picks.splice(i, 1); }
+      paint(b, state.picks.indexOf(label) !== -1);
+      refresh();
+    });
+    chipRow.appendChild(b);
+    return b;
+  });
+
+  function ready(){
+    return state.note.trim().length > 0 || state.picks.length > 0 || !!state.gut;
+  }
+
+  function refresh(){
+    var ok = ready();
+    submit.disabled = !ok;
+    submit.style.background = ok ? 'var(--ink)' : 'var(--card2)';
+    submit.style.color = ok ? 'var(--paper)' : 'var(--ink3)';
+    submit.style.cursor = ok ? 'pointer' : 'default';
+  }
+
+  note.addEventListener('input', function(){ state.note = note.value; refresh(); });
+
+  form.addEventListener('submit', function(e){
+    e.preventDefault();
+    if(!ready()) return;
+
+    var payload = {
+      gut: state.gut,
+      liked: state.picks.slice(),
+      note: state.note.trim(),
+      submittedAt: new Date().toISOString()
+    };
+
+    function done(){
+      form.hidden = true;
+      thanks.hidden = false;
+      thanks.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    if(!FEEDBACK_ENDPOINT){ done(); return; }
+
+    submit.disabled = true;
+    status.textContent = 'SENDING…';
+    fetch(FEEDBACK_ENDPOINT, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify(payload)
+    }).then(function(res){
+      if(!res.ok) throw new Error('HTTP ' + res.status);
+      status.textContent = '';
+      done();
+    }).catch(function(){
+      submit.disabled = false;
+      status.textContent = "COULDN'T SEND — CHECK YOUR CONNECTION AND TRY AGAIN.";
+    });
+  });
+
+  document.getElementById('again-btn').addEventListener('click', function(){
+    state = { gut: null, picks: [], note: '' };
+    note.value = '';
+    gutButtons.forEach(function(b){ paint(b, false); });
+    chipButtons.forEach(function(b){ paint(b, false); });
+    status.textContent = '';
+    thanks.hidden = true;
+    form.hidden = false;
+    refresh();
+    form.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  });
+
+  refresh();
+})();
+</script>
+
+</body>
+</html>
