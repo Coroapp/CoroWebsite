@@ -45,6 +45,10 @@
   [data-section]{scroll-margin-top:24px}
   button.cta{font:inherit;text-align:left}
   :focus-visible{outline:2px solid var(--clay-ink);outline-offset:2px}
+  .contact-row{display:block;border:1px solid var(--ink);border-top:none}
+  .contact-row input{display:block;width:100%;border:none;background:var(--card);font-family:'Hanken Grotesk',system-ui,sans-serif;font-size:15px;color:var(--ink);padding:13px 16px;outline:none;min-width:0}
+  .contact-row input::placeholder{color:var(--ink3)}
+  .hp{position:absolute;left:-9999px;width:1px;height:1px;opacity:0}
   @media (max-width: 1180px){
     #record-grid{grid-template-columns:repeat(2,1fr) !important}
   }
@@ -341,6 +345,12 @@
           <label class="mono" for="note" style="display:block;font-size:10.5px;letter-spacing:.12em;color:var(--ink2);margin-bottom:10px">WHAT WOULD YOU CHANGE?</label>
           <textarea id="note" name="note" placeholder="The part I'd push back on is…" style="display:block;width:100%;height:130px;resize:vertical;border:1px solid var(--ink);background:var(--card);padding:14px 16px;font-family:'Hanken Grotesk',system-ui,sans-serif;font-size:15px;line-height:1.5;color:var(--ink);outline:none"></textarea>
 
+          <div class="contact-row">
+            <input id="fname" name="name" type="text" autocomplete="name" placeholder="Your name (optional)" aria-label="Your name, optional">
+          </div>
+
+          <input class="hp" type="text" id="botcheck" name="botcheck" tabindex="-1" autocomplete="off" aria-hidden="true">
+
           <button id="submit-btn" type="submit" disabled style="display:block;width:100%;border:1px solid var(--ink);border-top:none;padding:15px 24px;font-family:inherit;font-size:14.5px;font-weight:700;text-align:center;background:var(--card2);color:var(--ink3);cursor:default">Send it</button>
           <div id="form-status" class="mono" role="status" aria-live="polite" style="font-size:10.5px;color:var(--ink3);margin-top:12px;min-height:14px"></div>
         </form>
@@ -372,10 +382,10 @@
 (function(){
   'use strict';
 
-  // Optional: paste a form endpoint (Formspree, Basin, Netlify, a Google Apps Script
-  // webhook, …) to actually receive responses. Left empty, the form only shows the
-  // thank-you panel locally and nothing is transmitted anywhere.
-  var FEEDBACK_ENDPOINT = '';
+  var WEB3FORMS_ACCESS_KEY = 'PASTE_YOUR_ACCESS_KEY_HERE';
+
+  var ENDPOINT = 'https://api.web3forms.com/submit';
+  var configured = /^[0-9a-f-]{20,}$/i.test(WEB3FORMS_ACCESS_KEY);
 
   var GUTS  = ['I’d use this', 'Maybe, needs work', 'Not for me'];
   var CHIPS = ['The feed', 'Who’s free', 'The poll', 'Digital scrapbook', 'Keeping it invite-only'];
@@ -386,6 +396,8 @@
   var gutRow  = document.getElementById('gut-row');
   var chipRow = document.getElementById('chip-row');
   var note    = document.getElementById('note');
+  var fname   = document.getElementById('fname');
+  var botcheck= document.getElementById('botcheck');
   var submit  = document.getElementById('submit-btn');
   var status  = document.getElementById('form-status');
   var thanks  = document.getElementById('thanks-panel');
@@ -446,44 +458,57 @@
 
   note.addEventListener('input', function(){ state.note = note.value; refresh(); });
 
+  function done(){
+    form.hidden = true;
+    thanks.hidden = false;
+    thanks.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+
   form.addEventListener('submit', function(e){
     e.preventDefault();
-    if(!ready()) return;
+    if(!ready() || submit.disabled) return;
 
-    var payload = {
-      gut: state.gut,
-      liked: state.picks.slice(),
-      note: state.note.trim(),
-      submittedAt: new Date().toISOString()
-    };
+    // Honeypot: real people never fill this, it's off-screen.
+    if(botcheck.value){ done(); return; }
 
-    function done(){
-      form.hidden = true;
-      thanks.hidden = false;
-      thanks.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    if(!configured){
+      status.textContent = 'THE FORM ISN’T CONNECTED YET — NOTHING WAS SENT.';
+      return;
     }
-
-    if(!FEEDBACK_ENDPOINT){ done(); return; }
 
     submit.disabled = true;
     status.textContent = 'SENDING…';
-    fetch(FEEDBACK_ENDPOINT, {
+
+    var payload = {
+      access_key: WEB3FORMS_ACCESS_KEY,
+      subject: 'Coro feedback' + (state.gut ? ' — ' + state.gut : ''),
+      from_name: 'Coro site',
+      'Gut reaction': state.gut || '—',
+      'What landed': state.picks.join(', ') || '—',
+      'What they’d change': state.note.trim() || '—',
+      'Name': fname.value.trim() || 'Anonymous'
+    };
+
+    fetch(ENDPOINT, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
       body: JSON.stringify(payload)
     }).then(function(res){
-      if(!res.ok) throw new Error('HTTP ' + res.status);
+      return res.json().catch(function(){ return { success: res.ok }; });
+    }).then(function(data){
+      if(!data || !data.success) throw new Error(data && data.message || 'send failed');
       status.textContent = '';
       done();
     }).catch(function(){
       submit.disabled = false;
-      status.textContent = "COULDN'T SEND — CHECK YOUR CONNECTION AND TRY AGAIN.";
+      status.textContent = 'COULDN’T SEND — CHECK YOUR CONNECTION AND TRY AGAIN.';
     });
   });
 
   document.getElementById('again-btn').addEventListener('click', function(){
     state = { gut: null, picks: [], note: '' };
     note.value = '';
+    fname.value = '';
     gutButtons.forEach(function(b){ paint(b, false); });
     chipButtons.forEach(function(b){ paint(b, false); });
     status.textContent = '';
