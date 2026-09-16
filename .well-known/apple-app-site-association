@@ -2,7 +2,7 @@
   "applinks": {
     "details": [
       {
-        "appIDs": ["<APPLE_TEAM_ID>.com.mitchja23.CoroApp"],
+        "appIDs": ["S9834837NL.com.mitchja23.CoroApp"],
         "components": [
           {
             "/": "/invite/*",
