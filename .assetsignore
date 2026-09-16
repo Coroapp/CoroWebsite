@@ -1,0 +1,10 @@
+# Same convention Cloudflare Pages used: _headers/_redirects/the wrangler
+# config aren't meant to be publicly downloadable files (Wrangler still
+# reads them for their special behavior regardless of this list -- this
+# only controls what's servable as a literal asset).
+.git
+.claude
+.assetsignore
+wrangler.jsonc
+_headers
+_redirects

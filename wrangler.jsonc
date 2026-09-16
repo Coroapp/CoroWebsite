@@ -1,0 +1,14 @@
+{
+  // Without this, Cloudflare's git-connected build had no way to know this
+  // repo is a static site rather than a Worker script -- it deployed
+  // something that only resolved "/" and 404'd on every nested page
+  // (/privacy, /terms, /.well-known/apple-app-site-association, etc.) on
+  // the first deploy, 2026-09-15. html_handling lets a request to /privacy
+  // resolve privacy/index.html the way Cloudflare Pages did automatically.
+  "name": "corowebsite",
+  "compatibility_date": "2026-09-15",
+  "assets": {
+    "directory": "./",
+    "html_handling": "auto-trailing-slash"
+  }
+}
