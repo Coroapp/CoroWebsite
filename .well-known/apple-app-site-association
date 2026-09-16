@@ -1,0 +1,15 @@
+{
+  "applinks": {
+    "details": [
+      {
+        "appIDs": ["<APPLE_TEAM_ID>.com.mitchja23.CoroApp"],
+        "components": [
+          {
+            "/": "/invite/*",
+            "comment": "Matches https://coroconnect.com/invite/<token>"
+          }
+        ]
+      }
+    ]
+  }
+}

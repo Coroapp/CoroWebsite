@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Join a Circle on Coro</title>
+<meta name="description" content="You've been invited to a private Circle on Coro.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20130%20130'%3E%3Crect%20width='130'%20height='130'%20rx='28'%20fill='oklch(0.99%200.005%2080)'/%3E%3Ccircle%20cx='42'%20cy='73.5'%20r='34'%20fill='oklch(0.32%200.055%20100)'/%3E%3Ccircle%20cx='88'%20cy='73.5'%20r='34'%20fill='oklch(0.755%200.124%2060)'/%3E%3Ccircle%20cx='65'%20cy='55.5'%20r='34'%20fill='oklch(0.36%200.126%2040)'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&amp;family=Hanken+Grotesk:wght@400;500;600;700&amp;family=Spline+Sans+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/site.css">
+<style>
+  body{display:flex;min-height:100vh;align-items:center;justify-content:center}
+  .card{max-width:360px;padding:32px 28px;text-align:center}
+  .card .mark-icon{width:46px;height:35px;margin:0 auto 20px}
+  .card h1{font-size:24px;font-weight:400;margin:0 0 10px;letter-spacing:-.01em}
+  .card p{font-size:15px;line-height:1.55;color:var(--ink2);margin:0 0 24px}
+  a.button{
+    display:inline-block;padding:14px 30px;border-radius:999px;
+    background:var(--amber);color:var(--paper);text-decoration:none;font-weight:600;font-size:15px;
+  }
+  a.button:hover{color:var(--paper)}
+  .hint{margin-top:18px;font-size:12.5px;color:var(--ink3)}
+</style>
+</head>
+<body>
+  <div class="card">
+    <svg class="mark-icon" viewBox="0 0 130 130" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="42" cy="73.5" r="34" fill="var(--moss)"/>
+      <circle cx="88" cy="73.5" r="34" fill="var(--plum)"/>
+      <circle cx="65" cy="55.5" r="34" fill="var(--amber)"/>
+    </svg>
+    <h1 class="serif">You're invited to a Circle on Coro</h1>
+    <p>Coro is a private app for small friend groups. If you already have it installed, this link should have opened it directly.</p>
+    <a class="button" id="open-app" href="#">Open in Coro</a>
+    <p class="hint" id="no-app-hint" hidden>
+      Don't have Coro yet? It's not on the App Store just yet — ask whoever sent you this link how to get a copy.
+    </p>
+  </div>
+  <script>
+    // Reached only when the OS didn't hand this off to the app directly
+    // (universal links only intercept if the app is installed and the AASA
+    // verification succeeded) -- so the app is very likely not installed.
+    // Still try the custom-scheme link once in case verification is pending,
+    // then show the "not installed" hint.
+    (function () {
+      var token = location.pathname.split('/').filter(Boolean).pop();
+      var appLink = 'coroapp://invite/' + token;
+      var openBtn = document.getElementById('open-app');
+      openBtn.href = appLink;
+      var hintTimer = setTimeout(function () {
+        document.getElementById('no-app-hint').hidden = false;
+      }, 1500);
+      openBtn.addEventListener('click', function () {
+        clearTimeout(hintTimer);
+      });
+    })();
+  </script>
+</body>
+</html>
