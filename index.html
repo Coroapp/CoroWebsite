@@ -3,119 +3,228 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Coro</title>
-<meta name="description" content="Something is circling back.">
-<meta property="og:title" content="Coro">
-<meta property="og:description" content="Something is circling back.">
+<title>Coro: Plans With Close Friends</title>
+<meta name="description" content="Your closest people, one private circle. See who's free, plan in a tap, and keep the pictures after. No feed, no strangers.">
+<meta property="og:title" content="Coro: Plans With Close Friends">
+<meta property="og:description" content="One private circle. See who's free, plan in a tap, keep the pictures after.">
 <meta property="og:type" content="website">
-<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20130%20130'%3E%3Crect%20width='130'%20height='130'%20rx='28'%20fill='oklch(0.99%200.005%2080)'/%3E%3Ccircle%20cx='42'%20cy='73.5'%20r='34'%20fill='oklch(0.32%200.055%20100)'/%3E%3Ccircle%20cx='88'%20cy='73.5'%20r='34'%20fill='oklch(0.755%200.124%2060)'/%3E%3Ccircle%20cx='65'%20cy='55.5'%20r='34'%20fill='oklch(0.36%200.126%2040)'/%3E%3C/svg%3E">
-
+<meta property="og:image" content="https://coroconnect.com/assets/img/icon.png">
+<meta name="theme-color" content="#F8F4EC">
+<link rel="icon" type="image/png" href="/assets/img/favicon.png">
+<link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&amp;family=Spline+Sans+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
-
-<style>
-  *{box-sizing:border-box}
-  :root{
-    --paper: oklch(0.99 0.005 80);
-    --ink: oklch(0.27 0.045 78);
-    --ink2: oklch(0.46 0.04 62);
-    --ink3: oklch(0.63 0.035 62);
-    --rule: oklch(0.27 0.045 78 / .16);
-    --moss: oklch(0.32 0.055 100);
-    --plum: oklch(0.755 0.124 60); --plum-ink: oklch(0.55 0.11 58);
-    --amber: oklch(0.36 0.126 40);
-  }
-  html,body{height:100%}
-  body{margin:0;background:var(--paper);color:var(--ink);font-family:'Spline Sans Mono',ui-monospace,monospace;-webkit-font-smoothing:antialiased}
-  .serif{font-family:'Newsreader',Georgia,serif}
-  .mono{font-family:'Spline Sans Mono',ui-monospace,monospace;font-weight:400}
-  #cover{position:relative;overflow:hidden;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:70px 24px;background:var(--paper)}
-  #cover-decor{position:absolute;inset:0;pointer-events:none}
-  .cover-ring{position:absolute;top:50%;left:50%;border-radius:50%;border:1px solid var(--rule);transform:translate(-50%,-50%)}
-  .cover-tick{position:absolute;top:50%;left:50%;width:1px;background:var(--rule);transform-origin:50% 300px}
-  .cover-dot{position:absolute;border-radius:50%}
-  .cover-mark{position:relative;width:130px;height:99px;margin:0 auto}
-  .cover-mark span{position:absolute;width:68px;height:68px;border-radius:50%}
-  .cover-corner{position:absolute;display:flex;align-items:center;gap:8px;font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--ink3)}
-  .cover-corner i{width:5px;height:5px;border:1px solid var(--rule);transform:rotate(45deg);display:inline-block}
-  @media (max-width: 620px){
-    .cover-corner{font-size:9.5px;letter-spacing:.14em}
-    #cover{padding:56px 20px}
-  }
-</style>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&amp;family=Marcellus&amp;family=Nanum+Pen+Script&amp;family=Spline+Sans+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/site.css">
+<link rel="stylesheet" href="/assets/home.css">
 </head>
 <body>
 
-<section id="cover">
-  <div id="cover-decor"></div>
-
-  <div class="cover-corner" style="top:6%;left:8%"><i></i>No. 001</div>
-  <div class="cover-corner" style="top:6%;right:8%"><i></i></div>
-
-  <div class="cover-mark">
-    <span style="left:8px;top:24px;background:var(--moss)"></span>
-    <span style="left:54px;top:24px;background:var(--plum)"></span>
-    <span style="left:31px;top:6px;background:var(--amber)"></span>
+<header class="nav">
+  <div class="wrap">
+    <a class="brand" href="/"><img src="/assets/img/favicon.png" alt="" width="36" height="36"><span>Coro</span></a>
+    <nav class="nav-links">
+      <a class="hide-m" href="#how">How it works</a>
+      <a class="hide-m" href="#private">Private</a>
+      <a class="hide-m" href="#plus">Plus</a>
+      <a class="btn small" href="https://apps.apple.com/app/id6813649933">Get the app</a>
+    </nav>
   </div>
+</header>
 
-  <h1 class="serif" style="position:relative;margin:5vh 0 0;font-size:clamp(64px,11vw,148px);font-weight:400;letter-spacing:-.03em;line-height:1">coro</h1>
+<main>
+<section class="hero">
+  <div class="wrap">
+    <div class="rv">
+      <h1>Plans with your <em>closest</em> people</h1>
+      <p class="lede">One private circle for the friends you want to keep up with. See who's free, plan in a tap, and keep the pictures after. No feed, no strangers.</p>
+      <div class="cta-row">
+        <a class="btn" href="https://apps.apple.com/app/id6813649933">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16.4 12.6c0-2.3 1.9-3.4 2-3.5-1.1-1.6-2.8-1.8-3.4-1.8-1.4-.1-2.8.9-3.5.9s-1.8-.8-3-.8c-1.5 0-3 .9-3.8 2.3-1.6 2.8-.4 7 1.2 9.3.8 1.1 1.7 2.4 2.9 2.3 1.2 0 1.6-.7 3-.7s1.8.7 3 .7c1.3 0 2.1-1.1 2.8-2.3.9-1.3 1.3-2.6 1.3-2.7 0 0-2.5-1-2.5-3.7zM14.2 5.8c.6-.8 1.1-1.8.9-2.8-.9 0-2 .6-2.6 1.4-.6.7-1.1 1.700-.9 2.700 1 .1 2-.5 2.600-1.300z"/></svg>
+          Download on iPhone
+        </a>
+        <a class="btn ghost" href="#how">See how it works</a>
+      </div>
+      <p class="fine">Free &middot; Invite-only &middot; Android coming soon</p>
+    </div>
 
-  <div class="mono" style="position:relative;margin-top:24px;font-size:14px;letter-spacing:.32em;text-transform:uppercase;color:var(--plum-ink)">Coming soon</div>
-
-  <div class="serif" style="position:relative;margin-top:14px;font-size:19px;font-style:italic;letter-spacing:.01em;color:var(--ink2)">Something is circling back.</div>
-
-  <div style="position:relative;margin-top:28px;display:flex;align-items:center;gap:10px">
-    <span style="width:22px;height:1px;background:var(--plum)"></span>
-    <span style="width:4px;height:4px;border-radius:50%;background:var(--amber)"></span>
-    <span style="width:22px;height:1px;background:var(--moss)"></span>
+    <div class="stage rv" aria-hidden="false">
+      <span class="blob" style="width:420px;height:420px;background:var(--amber);opacity:.35;left:12%;top:60px;filter:blur(2px)"></span>
+      <span class="blob" style="width:200px;height:200px;background:var(--rose);opacity:.45;right:2%;top:440px"></span>
+      <span class="blob" style="width:120px;height:120px;background:var(--olive-lt);opacity:.6;left:0;top:340px"></span>
+      <figure class="polaroid p1"><img src="/assets/img/p_beach.jpg" alt="Friends at the beach" loading="eager"><figcaption>salt hair</figcaption></figure>
+      <div class="phone"><img src="/assets/img/ph_home.webp" alt="Coro home screen showing Taco Night, who's free, and today's prints" width="640" height="1364"></div>
+      <figure class="polaroid p2"><img src="/assets/img/p_concert.jpg" alt="Concert crowd" loading="eager"><figcaption>front row</figcaption></figure>
+      <figure class="polaroid p3"><img src="/assets/img/p_coffee.jpg" alt="Coffee" loading="eager"><figcaption>first round</figcaption></figure>
+    </div>
   </div>
-
-  <div class="cover-corner" style="bottom:5%;left:8%">Est. 2026</div>
 </section>
 
+<div class="strip-wrap"><div class="strip" aria-hidden="true">
+  <div class="strip-track">
+    <span>Who's free<i></i>Plans in a tap<i></i>Quick polls<i></i>Our story<i></i>Your year on film<i></i>Just your crew<i></i></span>
+    <span>Who's free<i></i>Plans in a tap<i></i>Quick polls<i></i>Our story<i></i>Your year on film<i></i>Just your crew<i></i></span>
+  </div>
+</div></div>
+
+<section class="section" id="how">
+  <div class="wrap">
+    <div class="section-head rv">
+      <h2>Less group chat. More hanging out.</h2>
+      <p>Coro is the part between "we should do something" and actually doing it, plus the pictures that make it worth remembering.</p>
+    </div>
+
+    <div class="feature">
+      <div class="fphone rv"><span class="bg" style="background:var(--amber);opacity:.4"></span><img src="/assets/img/ph_whosfree.webp" alt="Who's free film strip in Coro" loading="lazy"></div>
+      <div class="ftext rv">
+        <h2>See who's free</h2>
+        <p>One tap sets your status. Glance at the roll and know who's around before you even ask.</p>
+        <div class="chips">
+          <span class="chip"><b style="background:var(--olive)"></b>Free now</span>
+          <span class="chip"><b style="background:var(--terra)"></b>Tonight</span>
+          <span class="chip"><b style="background:var(--rose)"></b>This weekend</span>
+          <span class="chip"><b style="background:var(--ink3)"></b>Off the grid</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="feature flip">
+      <div class="fphone rv"><span class="bg" style="background:var(--rose);opacity:.35"></span><img src="/assets/img/ph_hangout.webp" alt="A Taco Night hangout invite with RSVPs" loading="lazy"></div>
+      <div class="ftext rv">
+        <h2>Plans in a tap</h2>
+        <p>Propose what, when and where. Your circle gets it instantly and can say yes, pass with a private note, or suggest something else.</p>
+        <ul class="ticks">
+          <li>Plans split? Coro turns it into a quick poll.</li>
+          <li>See who's in and who's still waiting.</li>
+          <li>Maps link and a note, right on the invite.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="feature">
+      <div class="fphone rv"><span class="bg" style="background:var(--olive-lt);opacity:.5"></span><img src="/assets/img/ph_story.webp" alt="Our Story scrapbook with polaroid photos" loading="lazy"></div>
+      <div class="ftext rv">
+        <h2>Keep the pictures after</h2>
+        <p>Every hangout becomes a polaroid page in your circle's shared scrapbook. Add photos in the days after and scroll back through the roll whenever you miss everyone.</p>
+      </div>
+    </div>
+
+    <div class="feature flip">
+      <div class="fphone rv"><span class="bg" style="background:var(--amber);opacity:.4"></span><img src="/assets/img/ph_calendar.webp" alt="October calendar styled as a film strip" loading="lazy"></div>
+      <div class="ftext rv">
+        <h2>Your year, on film</h2>
+        <p>Your calendar fills in with the days that actually happened. Every cell is a frame, and the good ones get a photo.</p>
+      </div>
+    </div>
+
+    <div class="feature">
+      <div class="fphone rv"><span class="bg" style="background:var(--rose);opacity:.35"></span><img src="/assets/img/ph_journal.webp" alt="Journal with traditions, streaks and ideas" loading="lazy"></div>
+      <div class="ftext rv">
+        <h2>Traditions, streaks &amp; ideas</h2>
+        <p>Watch the patterns unique to your group show up: the things you do every time without really planning it. Keep a running list of ideas for next time.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="wall">
+  <div class="wrap">
+    <div class="section-head rv" style="margin-bottom:40px">
+      <p class="eyebrow">Pictures, not posts</p>
+      <h2>The good stuff stays in the circle</h2>
+      <p>No likes, no followers, no audience. Just the people who were there.</p>
+    </div>
+    <div class="wall-grid">
+      <figure class="polaroid rv"><img src="/assets/img/p_hike.jpg" alt="Hiking" loading="lazy"><figcaption>snowy hikes</figcaption></figure>
+      <figure class="polaroid rv"><img src="/assets/img/p_roadtrip.jpg" alt="Road trip" loading="lazy"><figcaption>are we there yet</figcaption></figure>
+      <figure class="polaroid rv"><img src="/assets/img/p_thrifting.jpg" alt="Thrifting" loading="lazy"><figcaption>thrift find</figcaption></figure>
+      <figure class="polaroid rv"><img src="/assets/img/p_camping.jpg" alt="Camping" loading="lazy"><figcaption>no signal</figcaption></figure>
+    </div>
+  </div>
+</section>
+
+<section class="band" id="private">
+  <div class="wrap">
+    <p class="eyebrow rv">Built small, on purpose</p>
+    <h2 class="rv">Not a social network. Just your circle.</h2>
+    <div class="triple">
+      <div class="rv"><h3>Invite-only</h3><p>No public profiles, no search, no discovery feed, no strangers. Every circle is exactly the people you invited.</p></div>
+      <div class="rv"><h3>Stays in the circle</h3><p>Nothing you post leaves it. Report or block anyone, and delete your account any time from Settings.</p></div>
+      <div class="rv"><h3>No ads, no data sold</h3><p>Coro is free to use. Your contacts are read on your device to send invites and are never uploaded.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="plus">
+  <div class="wrap">
+    <div class="section-head rv">
+      <p class="eyebrow">Pricing</p>
+      <h2>Free for your crew. Plus for a bigger one.</h2>
+      <p>Upgrade a circle to Coro Plus to raise its limits for everyone in it. Optional, and you can cancel any time.</p>
+    </div>
+    <div class="plans">
+      <div class="plan rv">
+        <h3>Free</h3>
+        <p class="price">Always</p>
+        <ul>
+          <li>Friends in a circle <b>6</b></li>
+          <li>Active plans <b>4</b></li>
+          <li>Photos per person, per page <b>21</b></li>
+        </ul>
+        <span class="pen">plenty for a core crew</span>
+      </div>
+      <div class="plan rv">
+        <h3>Coro Plus</h3>
+        <p class="price">Monthly or yearly, per circle</p>
+        <ul>
+          <li>Friends in a circle <b>10</b></li>
+          <li>Active plans <b>8</b></li>
+          <li>Photos per person, per page <b>42</b></li>
+        </ul>
+        <span class="pen" style="color:var(--amber)">for the big group chat</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="final">
+  <div class="wrap">
+    <img class="rv" src="/assets/img/icon.png" alt="Coro" width="112" height="112">
+    <h2 class="rv">Round up your people</h2>
+    <p class="rv">Make a circle, invite your friends, and start planning something.</p>
+    <div class="cta-row rv">
+      <a class="btn" href="https://apps.apple.com/app/id6813649933">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16.4 12.6c0-2.3 1.9-3.4 2-3.5-1.1-1.6-2.8-1.8-3.4-1.8-1.4-.1-2.8.9-3.5.9s-1.8-.8-3-.8c-1.5 0-3 .9-3.8 2.3-1.6 2.8-.4 7 1.2 9.3.8 1.1 1.7 2.4 2.9 2.3 1.2 0 1.6-.7 3-.7s1.8.7 3 .7c1.3 0 2.1-1.1 2.8-2.3.9-1.3 1.3-2.6 1.3-2.7 0 0-2.5-1-2.5-3.7zM14.2 5.8c.6-.8 1.1-1.8.9-2.8-.9 0-2 .6-2.6 1.4-.6.7-1.1 1.7-.9 2.7 1 .1 2-.5 2.6-1.3z"/></svg>
+        Download on iPhone
+      </a>
+    </div>
+    <p class="fine" style="margin-top:22px">Android is coming soon</p>
+  </div>
+</section>
+</main>
+
+<footer class="foot">
+  <div class="wrap">
+    <a class="brand" href="/"><img src="/assets/img/favicon.png" alt="" width="30" height="30" style="width:30px;height:30px"><span style="font-size:18px">Coro</span></a>
+    <nav>
+      <a href="/support/">Support</a>
+      <a href="/privacy/">Privacy</a>
+      <a href="/terms/">Terms</a>
+      <a href="/delete-account/">Delete account</a>
+    </nav>
+    <span class="copy">&copy; 2026 Jacob Mitchell</span>
+  </div>
+</footer>
+
 <script>
-(function(){
-  var decor = document.getElementById('cover-decor');
-  if(!decor) return;
-
-  [60, 42].forEach(function(vh){
-    var ring = document.createElement('div');
-    ring.className = 'cover-ring';
-    ring.style.width = vh + 'vh';
-    ring.style.height = vh + 'vh';
-    decor.appendChild(ring);
-  });
-
-  for(var i = 0; i < 36; i++){
-    var deg = i * 10, major = i % 3 === 0;
-    var tick = document.createElement('div');
-    tick.className = 'cover-tick';
-    tick.style.height = (major ? 9 : 5) + 'px';
-    tick.style.opacity = major ? .5 : .3;
-    tick.style.transform = 'translate(-50%,-300px) rotate(' + deg + 'deg)';
-    decor.appendChild(tick);
-  }
-
-  var dotColors = ['var(--moss)', 'var(--plum)', 'var(--amber)'];
-  var scatter = [
-    {x:12,y:16,s:5,o:.5},{x:88,y:14,s:4,o:.4},{x:9,y:82,s:4,o:.4},{x:91,y:80,s:5,o:.5},
-    {x:18,y:48,s:3,o:.35},{x:82,y:52,s:3,o:.35},{x:6,y:50,s:4,o:.3},{x:94,y:47,s:4,o:.3},
-    {x:15,y:70,s:3,o:.3},{x:85,y:28,s:3,o:.3}
-  ];
-  scatter.forEach(function(d, i){
-    var dot = document.createElement('div');
-    dot.className = 'cover-dot';
-    dot.style.left = d.x + '%';
-    dot.style.top = d.y + '%';
-    dot.style.width = d.s + 'px';
-    dot.style.height = d.s + 'px';
-    dot.style.opacity = d.o;
-    dot.style.background = dotColors[i % 3];
-    decor.appendChild(dot);
-  });
+(function () {
+  var els = document.querySelectorAll('.rv');
+  if (!('IntersectionObserver' in window)) { els.forEach(function (e) { e.classList.add('in'); }); return; }
+  var io = new IntersectionObserver(function (entries) {
+    entries.forEach(function (en) { if (en.isIntersecting) { en.target.classList.add('in'); io.unobserve(en.target); } });
+  }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+  els.forEach(function (e) { io.observe(e); });
 })();
 </script>
-
 </body>
 </html>
