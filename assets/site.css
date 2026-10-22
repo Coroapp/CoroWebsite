@@ -20,7 +20,7 @@ body{
 }
 body::before{ /* paper grain */
   content:"";position:fixed;inset:0;pointer-events:none;z-index:50;
-  background:url(/assets/img/grain.png);background-size:200px;opacity:.28;mix-blend-mode:multiply;
+  background:url(/assets/img/grain.png);background-size:200px;opacity:.28;transform:translateZ(0);
 }
 a{color:var(--terra)}
 a:hover{color:var(--oxblood)}
